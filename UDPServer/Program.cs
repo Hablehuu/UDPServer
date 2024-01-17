@@ -21,10 +21,12 @@ namespace UDPServer
             Socket palvelin = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             IPEndPoint iep = new IPEndPoint(IPAddress.Any, 25000);
             palvelin.Bind(iep);
+            
             byte[] rec = new byte[3000];
             int paljon = 0;
             IPEndPoint iap = new IPEndPoint(IPAddress.Any, 0);
             EndPoint senderRemote = (EndPoint)iap;
+            //Console.WriteLine(senderRemote.ToString());
             EndPoint[] kayttajatIP = new EndPoint[20];
             int maara = 0;
             string viesti = "";
@@ -42,7 +44,7 @@ namespace UDPServer
                     case "Register":
 
                         //TODO Register the client to the database 
-                        string connetionString = @"Data Source=DESKTOP-MM4FH53;Initial Catalog=Users;User ID=sa;Password=fy42Klo00";
+                        string connetionString = @"Data Source=DESKTOP-MM4FH53;Initial Catalog=Users;User ID="+args[0]+";Password="+args[1];
                         SqlConnection cnn = new SqlConnection(connetionString);
 
                         string[] userAndPass = viestisplit[1].Split(';');
@@ -128,12 +130,14 @@ namespace UDPServer
                     case "Connect":
                         kayttajatIP[maara] = senderRemote;
                         maara++;
+                        Console.WriteLine("user with the name: " +viestisplit[1] + " connected");
 
                         break;
 
                     default:
                         string virhe = "Something went wrong";
                         byte[] viestii = System.Text.Encoding.ASCII.GetBytes(virhe);
+                        Console.WriteLine(virhe);
                         palvelin.SendTo(viestii, senderRemote);
                         break;
 
